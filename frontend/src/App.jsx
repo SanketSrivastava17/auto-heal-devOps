@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react'
 import './index.css'
 
-const DEMO_API = 'http://localhost:5000'
-const AUTOHEAL_API = 'http://localhost:8000'
+const DEMO_API = 'https://list-brochure-tube-valley.trycloudflare.com'
+const AUTOHEAL_API = 'https://variations-order-engaging-relations.trycloudflare.com'
 
 function App() {
     const [health, setHealth] = useState('Checking...')
@@ -89,7 +89,7 @@ function App() {
             <div style={{ marginTop: '2rem' }}>
                 <h3>Metrics (Grafana)</h3>
                 <iframe
-                    src="http://localhost:3001/d-solo/autoheal-dash/autoheal-dashboard?orgId=1&panelId=1&theme=dark"
+                    src="https://decor-now-clay-mhz.trycloudflare.com/d-solo/autoheal-dash/autoheal-dashboard?orgId=1&panelId=1&theme=dark"
                     width="100%"
                     height="200"
                     frameBorder="0">

@@ -68,6 +68,27 @@ services:
     networks:
       - autoheal-net
 
+  tunnel-demo:
+    image: cloudflare/cloudflared:latest
+    container_name: tunnel-demo
+    command: tunnel --url http://demo-service:5000
+    networks:
+      - autoheal-net
+
+  tunnel-autoheal:
+    image: cloudflare/cloudflared:latest
+    container_name: tunnel-autoheal
+    command: tunnel --url http://autoheal-engine:8000
+    networks:
+      - autoheal-net
+
+  tunnel-grafana:
+    image: cloudflare/cloudflared:latest
+    container_name: tunnel-grafana
+    command: tunnel --url http://grafana:3000
+    networks:
+      - autoheal-net
+
   frontend:
     build: ./frontend
     container_name: frontend
