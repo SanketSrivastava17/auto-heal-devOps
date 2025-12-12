@@ -45,6 +45,18 @@ function App() {
         checkHealth()
         return () => clearInterval(interval)
     }, [])
+    // Generate Traffic (so we have requests to measure)
+    useEffect(() => {
+        const generateTraffic = async () => {
+            try {
+                await fetch(`${DEMO_API}/`)
+            } catch (e) {
+                // Ignore errors (expected when 500 mode is on)
+            }
+        }
+        const interval = setInterval(generateTraffic, 1000)
+        return () => clearInterval(interval)
+    }, [])
 
     const toggleFault = async (type) => {
         try {
