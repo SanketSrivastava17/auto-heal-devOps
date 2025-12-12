@@ -1,0 +1,84 @@
+version: '3.8'
+
+services:
+  demo-service:
+    build: ./demo-service
+    container_name: demo-service
+    ports:
+      - "5000:5000"
+    environment:
+      - INSTANCE_ID=demo-1
+    networks:
+      - autoheal-net
+
+  autoheal-engine:
+    build: ./autoheal-engine
+    container_name: autoheal-engine
+    ports:
+      - "8000:8000"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    depends_on:
+      - demo-service
+    networks:
+      - autoheal-net
+
+  prometheus:
+    image: prom/prometheus:v2.45.0
+    container_name: prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./monitoring/alerts.yml:/etc/prometheus/alerts.yml
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+      - --enable-feature=agent
+    depends_on:
+      - demo-service
+    networks:
+      - autoheal-net
+
+  alertmanager:
+    image: prom/alertmanager:v0.25.0
+    container_name: alertmanager
+    ports:
+      - "9093:9093"
+    volumes:
+      - ./monitoring/alertmanager.yml:/etc/alertmanager/alertmanager.yml
+    command:
+      - --config.file=/etc/alertmanager/alertmanager.yml
+    networks:
+      - autoheal-net
+
+  grafana:
+    image: grafana/grafana:10.0.0
+    container_name: grafana
+    ports:
+      - "3001:3000"
+    volumes:
+      - ./monitoring/grafana/datasources.yml:/etc/grafana/provisioning/datasources/datasources.yml
+      - ./monitoring/grafana/dashboards_provider.yml:/etc/grafana/provisioning/dashboards/dashboards.yml
+      - ./monitoring/grafana/dashboards:/var/lib/grafana/dashboards
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_SECURITY_ALLOW_EMBEDDING=true
+      - GF_AUTH_ANONYMOUS_ENABLED=true
+      - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
+    networks:
+      - autoheal-net
+
+  frontend:
+    build: ./frontend
+    container_name: frontend
+    ports:
+      - "3000:3000"
+    depends_on:
+      - demo-service
+      - autoheal-engine
+    networks:
+      - autoheal-net
+
+networks:
+  autoheal-net:
+    driver: bridge

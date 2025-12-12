@@ -1,0 +1,29 @@
+groups:
+  - name: autoheal_alerts
+    rules:
+      - alert: HighErrorRate
+        expr: rate(http_requests_total{status="500"}[30s]) > 0
+        for: 5s
+        labels:
+          severity: critical
+        annotations:
+          summary: "High Error Rate detected"
+          description: "Demo Service is returning 500 errors."
+
+      - alert: HighLatency
+        expr: rate(http_request_duration_seconds_sum[30s]) / rate(http_request_duration_seconds_count[30s]) > 1
+        for: 5s
+        labels:
+          severity: warning
+        annotations:
+          summary: "High Latency detected"
+          description: "Request latency is above 1 second."
+      
+      - alert: InstanceUnhealthy
+        expr: app_health_status == 0
+        for: 5s
+        labels:
+          severity: critical
+        annotations:
+          summary: "Instance is unhealthy"
+          description: "Demo Service health check failed."

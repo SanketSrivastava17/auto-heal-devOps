@@ -1,0 +1,96 @@
+:root {
+  --primary: #646cff;
+  --bg-color: #242424;
+  --text-color: rgba(255, 255, 255, 0.87);
+  --success: #4caf50;
+  --error: #f44336;
+  --warning: #ff9800;
+  --card-bg: #1a1a1a;
+}
+
+body {
+  margin: 0;
+  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  display: flex;
+  justify-content: center;
+  min-height: 100vh;
+}
+
+#root {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+  text-align: center;
+}
+
+.header {
+  margin-bottom: 2rem;
+}
+
+.status-indicator {
+  font-size: 1.5rem;
+  font-weight: bold;
+  padding: 1rem;
+  border-radius: 8px;
+  display: inline-block;
+  margin-bottom: 1rem;
+  background: var(--card-bg);
+  border: 1px solid #333;
+}
+
+.status-healthy { color: var(--success); }
+.status-unhealthy { color: var(--error); }
+
+.controls {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  margin-bottom: 2rem;
+}
+
+button {
+  border-radius: 8px;
+  border: 1px solid transparent;
+  padding: 0.6em 1.2em;
+  font-size: 1em;
+  font-weight: 500;
+  font-family: inherit;
+  background-color: var(--card-bg);
+  cursor: pointer;
+  transition: border-color 0.25s;
+  color: white;
+}
+
+button:hover {
+  border-color: var(--primary);
+}
+
+button.active {
+  background-color: var(--warning);
+  color: black;
+}
+
+.timeline {
+  text-align: left;
+  background: var(--card-bg);
+  padding: 1rem;
+  border-radius: 8px;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.event-row {
+  border-bottom: 1px solid #333;
+  padding: 0.5rem 0;
+  display: flex;
+  gap: 1rem;
+}
+
+.event-time { color: #888; font-size: 0.9em; min-width: 150px; }
+.event-status { font-weight: bold; }
+.status-Resolved { color: var(--success); }
+.status-In-Progress { color: var(--warning); }
+.status-Failed { color: var(--error); }
