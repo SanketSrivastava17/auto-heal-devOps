@@ -93,5 +93,15 @@ def toggle_unhealthy():
     logger.info(f"Health Status toggled: {state.healthy}")
     return jsonify({"healthy": state.healthy})
 
+@app.route('/reset', methods=['POST'])
+def reset_service():
+    state.error_mode = False
+    state.latency_mode = False
+    state.cpu_spike_mode = False
+    state.healthy = True
+    HEALTH_STATUS.set(1)
+    logger.info("Service Reset via API")
+    return jsonify({"status": "Reset Successful"})
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)

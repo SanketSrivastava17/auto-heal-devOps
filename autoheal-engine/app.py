@@ -21,11 +21,10 @@ app.add_middleware(
 )
 
 # Docker Client
-try:
-    client = docker.from_env()
-except Exception as e:
-    logger.error(f"Failed to connect to Docker: {e}")
-    client = None
+
+# Environment (URL of the Demo Service)
+import os
+DEMO_SERVICE_URL = os.getenv("DEMO_SERVICE_URL", "http://demo-service:5000")
 
 # Audit Log Store
 audit_log = []
@@ -53,22 +52,17 @@ def log_event(action, details, status):
     if len(audit_log) > 50:
         audit_log.pop(0)
 
-def remediate_high_error_rate():
-    logger.info("Executing Remediation: Restarting Demo Service")
-    log_event("Remediation Started", "High Error Rate detected. Restarting service...", "In Progress")
+    logger.info("Executing Remediation: Soft Reset Demo Service")
+    log_event("Remediation Started", "High Error Rate detected. Sending Reset command...", "In Progress")
     
-    if not client:
-        log_event("Remediation Failed", "Docker client not available", "Failed")
-        return
-
+    import requests
     try:
-        container = client.containers.get("demo-service")
-        container.restart()
-        log_event("Remediation Complete", "Service restarted successfully.", "Resolved")
-        logger.info("Demo Service restarted.")
+        requests.post(f"{DEMO_SERVICE_URL}/reset")
+        log_event("Remediation Complete", "Service reset successfully via API.", "Resolved")
+        logger.info("Demo Service soft reset.")
     except Exception as e:
         log_event("Remediation Failed", str(e), "Failed")
-        logger.error(f"Failed to restart container: {e}")
+        logger.error(f"Failed to reset service: {e}")
 
 def remediate_high_latency():
     logger.info("Executing Remediation: Scaling Up (Simulated)")
@@ -88,13 +82,12 @@ def remediate_high_latency():
 
 def remediate_unhealthy():
     logger.info("Executing Remediation: Service Unhealthy")
-    log_event("Remediation Started", "Service Unhealthy. Hard Restarting...", "In Progress")
-    # Similar to restart but maybe force kill? Just restart for now.
-    if not client: return
+    log_event("Remediation Started", "Service Unhealthy. Sending Reset command...", "In Progress")
+    
+    import requests
     try:
-        container = client.containers.get("demo-service")
-        container.restart()
-        log_event("Remediation Complete", "Service hard restarted.", "Resolved")
+        requests.post(f"{DEMO_SERVICE_URL}/reset")
+        log_event("Remediation Complete", "Service reset successfully via API.", "Resolved")
     except Exception as e:
         log_event("Remediation Failed", str(e), "Failed")
 
